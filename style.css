@@ -1,0 +1,72 @@
+body {
+    margin: 0px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+form {
+    width: 480px;
+    display: flex;
+    justify-content: center;
+    margin-top: 16px;
+
+    border-bottom: 2px solid black;
+}
+
+input {
+    width: 360px;
+    height: 32px;
+    padding: 0px 0px 0px 8px;
+
+    border: none;
+    outline: none;
+
+    font-family: Roboto;
+    font-size: 12px;
+}
+
+button {
+    width: 120px;
+
+    background: blue;
+    border: none;
+    outline: none;
+
+    font-family: Roboto;
+    font-size: 12px;
+    color: white;
+}
+
+div {
+    width: 480px;
+}
+
+ul {
+    margin-top: 16px;
+    padding: 0px;
+}
+
+img {
+    float: left;
+    width: 96px;
+    height: 96px;
+}
+
+p {
+    float: left;
+    width: 360px;
+
+    margin: 4px 12px;
+
+    font-family: Roboto;
+    font-size: 16px;
+    color: black;
+}
+
+li {
+    list-style-type: none;
+    width: 480px;
+    height: 128px;
+}
