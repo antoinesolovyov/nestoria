@@ -70,3 +70,11 @@ li {
     width: 480px;
     height: 128px;
 }
+
+.pagination li {
+    list-style-type: none;
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    background: red;
+}
