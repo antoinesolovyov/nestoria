@@ -21,26 +21,30 @@ const ul = document.createElement("ul");
 let liArray = [];
 let placeName;
 
-let favoriteIsClick = false;
+// favorites button click
+let favoriteIsClicked = false;
+
 inputComponent.favorite.onclick = () => {
     if (!favoriteIsClick) {
         inputComponent.favorite.style.background = "red";
         listComponent.renderFavorite();
         loadMoreComponent.loadMoreButton.style.display = "none";
         ul.style.display = "none";
-        favoriteIsClick = true;
+        favoriteIsClicked = true;
     } else {
         inputComponent.favorite.style.background = "white";
         listComponent.render();
         loadMoreComponent.loadMoreButton.style.display = "block";
         ul.style.display = "block";
-        favoriteIsClick = false;
+        favoriteIsClicked = false;
     }
 };
 
+// input search click
 const listObject = new ListObject();
 let page = 1;
 let totalPages;
+
 inputComponent.button.onclick = () => {
     page = 1;
     listObject.listObject = [];
@@ -64,8 +68,8 @@ inputComponent.button.onclick = () => {
                 listComponent.render();
             }
 
+            // pagination
             totalPages = json.total_pages;
-
             ul.innerHTML = "";
             liArray = [];
 
@@ -81,8 +85,6 @@ inputComponent.button.onclick = () => {
 
     // loadmore click
     loadMoreComponent.loadMoreButton.onclick = () => {
-        console.log("load more button");
-
         page++;
 
         const json = getResponse(placeName);
@@ -171,8 +173,6 @@ async function getResponse(placeName) {
 
     const response = await fetch(url);
     const json = await response.json();
-
-    console.log("Response:", json.response);
 
     return json.response;
 }

@@ -25,6 +25,7 @@ export class ListObject {
 
     popFavorite(itemObject) {
         const idx = this.favoriteListObject.indexOf(itemObject);
+        
         this.favoriteListObject.splice(idx, 1);
     }
 }

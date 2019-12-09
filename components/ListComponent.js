@@ -26,8 +26,6 @@ export class ListComponent {
  
             // add event
             item.addDiv.addEventListener("click", () => {
-                console.log("favorites");
-
                 if (!item.isFavorite) {
                     this.ulFavorite.appendChild(favoriteItem.itemElement);
                     listObject.pushFavorite(listObject.listObject[i]);
