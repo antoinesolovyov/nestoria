@@ -1,70 +1,80 @@
 import { InputComponent } from "./components/InputComponent.js";
 import { ListComponent } from "./components/ListComponent.js";
-
-let listComponent;
+import { PaginationComponent } from "./components/PaginationComponent.js";
+import { ListObject } from "./objects/ListObject.js";
+import { ItemObject } from "./objects/ItemObject.js";
 
 const inputComponent = new InputComponent();
-inputComponent.render(document.body);
-
 const listAnchor = document.createElement("div");
-const paginationAnchor = document.createElement("div");
-document.body.append(listAnchor);
-document.body.append(paginationAnchor)
-
-const loadMoreButton = document.createElement("button");
-loadMoreButton.innerText = "load more";
-document.body.append(loadMoreButton);
+const listComponent = new ListComponent(listAnchor);
+let paginationComponent;
+const listObject = new ListObject();
 
 let page = 1;
-let placeName = "";
 
+inputComponent.render(document.body);
+document.body.append(listAnchor);
+
+// button search click
 inputComponent.button.onclick = () => {
+    page = 1;
+    listObject.listObject = [];
+    inputComponent.favorite.style.background = "white";
 
-    placeName = inputComponent.input.value;
-
+    let placeName = inputComponent.input.value;
     if (placeName) getRequest(placeName);
+
+    /*
+    // pagination click
+    paginationComponent.loadMoreButton.onclick = () => {
+        console.log("load more button");
+        page++;
+
+        getRequest(placeName);
+    
+        favoriteIsClick = false;
+
+        paginationComponent.render();
+    
+        return false;
+    };
+    */
 
     return false;
 };
 
-loadMoreButton.onclick = () => {
-    console.log("load more button");
+async function getRequest(placeName) {
+    const url = `https://api.nestoria.co.uk/api?page=${page}&encoding=json&action=search_listings&place_name=${placeName}`;
 
-    loadMore(placeName);
-};
+    const response = await fetch(url);
+    const json = await response.json();
 
-function loadMore(placeName) {
-    page++;
+    for (const listing of json.response.listings) {
+        listObject.push(new ItemObject(listing));
+    }
 
-    let proxyUrl = "https://cors-anywhere.herokuapp.com/";
-    let targetUrl = `https://api.nestoria.co.uk/api?page=${page}&encoding=json&action=search_listings&place_name="${placeName}"`;
+    console.log("Response:", json.response);
 
-    fetch(proxyUrl + targetUrl)
-        .then(response => response.json())
-        .then(json => {
-            listComponent.add(json.response.listings);
-            console.log(json.response.listings, listComponent.count);
-            listComponent.render(listAnchor);
-        })
-        .catch(error => {
-            console.log("error: ", error);
-        });
+    listComponent.add(listObject);
+    listComponent.render();
+
+    favoriteIsClick = false;
+
+    paginationComponent = new PaginationComponent(document.body, json.response);
+    paginationComponent.render();
 }
 
-function getRequest(placeName) {
+let favoriteIsClick = false;
+inputComponent.favorite.onclick = () => {
+    console.log("Favorite onclick");
 
-    let proxyUrl = "https://cors-anywhere.herokuapp.com/";
-    let targetUrl = `https://api.nestoria.co.uk/api?page=${page}&encoding=json&action=search_listings&place_name="${placeName}"`;
-
-    fetch(proxyUrl + targetUrl)
-        .then(response => response.json())
-        .then(json => {
-            listComponent = new ListComponent(json.response.listings);
-            listComponent.render(listAnchor);
-        })
-        .catch(error => {
-            console.log("error: ", error);
-        });
+    if (!favoriteIsClick) {
+        inputComponent.favorite.style.background = "red";
+        listComponent.renderFavorite();
+        favoriteIsClick = true;
+    } else {
+        inputComponent.favorite.style.background = "white";
+        listComponent.render();
+        favoriteIsClick = false;
+    }
 }
-
-

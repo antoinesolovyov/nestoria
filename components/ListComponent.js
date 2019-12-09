@@ -1,44 +1,90 @@
+import { ItemComponent } from "./ItemComponent.js";
+import { ModalComponent } from "./ModalComponent.js";
+
 export class ListComponent {
-    constructor(objects) {
+    constructor(anchor) {
         this.ul = document.createElement("ul");
+        this.ulFavorite = document.createElement("ul");
 
-        this.count = objects.length;
+        this.anchor = anchor;
+    }
 
-        for (let i = 0; i < objects.length; i++) {
-            let li = document.createElement("li");
+    add(listObject) {
+        this.ul.innerHTML = "";
 
-            li.innerHTML = `
-                <img src="${objects[i].img_url}">
-                
-                    <p><b>${objects[i].title}</b></p>
-                    <p>${objects[i].summary}</p>
-                    <p><strong>${objects[i].price_formatted}</strong></p>
-            `;
+        for (let i = 0; i < listObject.listObject.length; i++) {
+            const item = new ItemComponent(listObject.listObject[i]);
 
-            this.ul.append(li);
+            if (!item.isFavorite) {
+                item.addDiv.style.background = "white";
+            } else {
+                item.addDiv.style.background = "red";
+            }
+
+            this.ul.append(item.itemElement);
+
+            // modal event
+            item.itemDiv.addEventListener("click", () => {
+                const modal = new ModalComponent(listObject.listObject[i]);
+
+                modal.modalElement.addEventListener("click", () => {
+                    this.anchor.removeChild(modal.modalElement);
+                });
+
+                modal.modalElement.addEventListener("click", () => {
+
+                });
+
+                this.anchor.append(modal.modalElement);
+            });
+
+            const favoriteItem = new ItemComponent(listObject.listObject[i]);
+
+            // add event
+            item.addDiv.addEventListener("click", () => {
+                console.log("favorites");
+
+                if (!item.isFavorite) {
+                    this.ulFavorite.appendChild(favoriteItem.itemElement);
+                    listObject.pushFavorite(listObject.listObject[i]);
+                    
+                    item.isFavorite = true;
+
+                    favoriteItem.addDiv.style.background = "red";
+                    item.addDiv.style.background = "red";
+                    
+                } else {
+                    this.ulFavorite.removeChild(favoriteItem.itemElement);
+                    listObject.popFavorite(listObject.listObject[i]);
+
+                    item.addDiv.style.background = "white";
+                    
+                    listObject.listObject[i].isFavorite = false;
+                    item.isFavorite = false;
+                }
+
+                favoriteItem.addDiv.addEventListener("click", () => {
+                    this.ulFavorite.removeChild(favoriteItem.itemElement);
+                    listObject.popFavorite(listObject.listObject[i]);
+
+                    item.addDiv.style.background = "white";
+                    
+                    listObject.listObject[i].isFavorite = false;
+                    item.isFavorite = false;
+
+                    this.renderFavorite();
+                });
+            });
         }
     }
 
-    add(objects) {
-        this.count += objects.length;
-
-        for (let i = 0; i < objects.length; i++) {
-            let li = document.createElement("li");
-
-            li.innerHTML = `
-                <img src="${objects[i].img_url}">
-                
-                    <p><b>${objects[i].title}</b></p>
-                    <p>${objects[i].summary}</p>
-                    <p><strong>${objects[i].price_formatted}</strong></p>
-            `;
-
-            this.ul.append(li);
-        }
+    render() {
+        this.anchor.innerHTML = "";
+        this.anchor.append(this.ul);
     }
 
-    render(anchor) {
-        anchor.innerHTML = "";
-        anchor.innerHTML = this.ul.outerHTML;
+    renderFavorite() {
+        this.anchor.innerHTML = "";
+        this.anchor.append(this.ulFavorite);
     }
 }
