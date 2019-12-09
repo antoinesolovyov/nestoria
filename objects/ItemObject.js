@@ -8,7 +8,5 @@ export class ItemObject {
         this.bathroomNumber = json.bathroom_number;
         this.bedroomNumber = json.bedroom_number;
         this.keywords = json.keywords;
-
-   //     this.isFavorite = false;
     }
 }

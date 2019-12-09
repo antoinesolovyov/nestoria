@@ -26,7 +26,7 @@ export class ItemComponent {
             modal.modalElement.addEventListener("click", () => {
                 document.body.removeChild(modal.modalElement);
             });
-/*
+            /*
             modal.modalElement.addEventListener("click", () => {
 
             });
