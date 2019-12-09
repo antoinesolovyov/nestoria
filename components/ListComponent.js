@@ -1,5 +1,4 @@
 import { ItemComponent } from "./ItemComponent.js";
-import { ModalComponent } from "./ModalComponent.js";
 
 export class ListComponent {
     constructor(anchor) {
@@ -9,7 +8,7 @@ export class ListComponent {
         this.anchor = anchor;
     }
 
-    add(listObject) {
+    onInit(listObject) {
         this.ul.innerHTML = "";
 
         for (let i = 0; i < listObject.listObject.length; i++) {
@@ -23,23 +22,8 @@ export class ListComponent {
 
             this.ul.append(item.itemElement);
 
-            // modal event
-            item.itemDiv.addEventListener("click", () => {
-                const modal = new ModalComponent(listObject.listObject[i]);
-
-                modal.modalElement.addEventListener("click", () => {
-                    this.anchor.removeChild(modal.modalElement);
-                });
-
-                modal.modalElement.addEventListener("click", () => {
-
-                });
-
-                this.anchor.append(modal.modalElement);
-            });
-
             const favoriteItem = new ItemComponent(listObject.listObject[i]);
-
+ 
             // add event
             item.addDiv.addEventListener("click", () => {
                 console.log("favorites");
@@ -48,6 +32,7 @@ export class ListComponent {
                     this.ulFavorite.appendChild(favoriteItem.itemElement);
                     listObject.pushFavorite(listObject.listObject[i]);
                     
+                    listObject.listObject[i].isFavorite = true;
                     item.isFavorite = true;
 
                     favoriteItem.addDiv.style.background = "red";
@@ -56,11 +41,11 @@ export class ListComponent {
                 } else {
                     this.ulFavorite.removeChild(favoriteItem.itemElement);
                     listObject.popFavorite(listObject.listObject[i]);
-
-                    item.addDiv.style.background = "white";
                     
                     listObject.listObject[i].isFavorite = false;
                     item.isFavorite = false;
+
+                    item.addDiv.style.background = "white";
                 }
 
                 favoriteItem.addDiv.addEventListener("click", () => {

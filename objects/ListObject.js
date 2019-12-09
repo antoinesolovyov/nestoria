@@ -6,13 +6,16 @@ export class ListObject {
 
     push(itemObject) {
         for (let i = 0; i < this.favoriteListObject.length; i++) {
-            if (this.favoriteListObject[i].title == itemObject.title &&
+            if (
+                this.favoriteListObject[i].title == itemObject.title &&
                 this.favoriteListObject[i].summary == itemObject.summary &&
-                this.favoriteListObject[i].priceFormatted == itemObject.priceFormatted) {
+                this.favoriteListObject[i].priceFormatted ==
+                    itemObject.priceFormatted
+            ) {
                 itemObject.isFavorite = true;
             }
         }
-        
+
         this.listObject.push(itemObject);
     }
 

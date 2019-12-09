@@ -1,3 +1,5 @@
+import { ModalComponent } from "./ModalComponent.js";
+
 export class ItemComponent {
     constructor(itemObject) {
         this.imgDiv = document.createElement("div");
@@ -16,6 +18,21 @@ export class ItemComponent {
 
         this.itemDiv = document.createElement("div");
         this.itemDiv.append(this.imgDiv, this.descriptionDiv);
+
+        // modal event
+        this.itemDiv.addEventListener("click", () => {
+            const modal = new ModalComponent(itemObject);
+
+            modal.modalElement.addEventListener("click", () => {
+                document.body.removeChild(modal.modalElement);
+            });
+/*
+            modal.modalElement.addEventListener("click", () => {
+
+            });
+*/
+            document.body.append(modal.modalElement);
+        });
 
         this.addDiv = document.createElement("div");
         this.addDiv.className = "add";

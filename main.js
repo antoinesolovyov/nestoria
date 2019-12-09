@@ -1,80 +1,147 @@
 import { InputComponent } from "./components/InputComponent.js";
 import { ListComponent } from "./components/ListComponent.js";
-import { PaginationComponent } from "./components/PaginationComponent.js";
+//import { LoadMoreComponent } from "./components/LoadMoreComponent.js";
 import { ListObject } from "./objects/ListObject.js";
 import { ItemObject } from "./objects/ItemObject.js";
+import { PaginationComponent } from "./components/PaginationComponent.js";
 
-const inputComponent = new InputComponent();
+const inputAnchor = document.createElement("div");
 const listAnchor = document.createElement("div");
+const loadMoreAnchor = document.createElement("div");
+const paginationAnchor = document.createElement("div");
+
+
+document.body.append(inputAnchor, listAnchor, loadMoreAnchor, paginationAnchor);
+
+const inputComponent = new InputComponent(inputAnchor);
 const listComponent = new ListComponent(listAnchor);
-let paginationComponent;
+//const loadMoreComponent = new LoadMoreComponent(loadMoreAnchor);
+const paginationComponent = new PaginationComponent(paginationAnchor);
+
+inputComponent.render();
+
+const ul = document.createElement("ul");
+
+
+
+
+
+
+
+
+
+let favoriteIsClick = false;
+inputComponent.favorite.onclick = () => {
+    if (!favoriteIsClick) {
+        inputComponent.favorite.style.background = "red";
+        listComponent.renderFavorite();
+  //      loadMoreComponent.loadMoreButton.style.display = "none";
+        favoriteIsClick = true;
+    } else {
+        inputComponent.favorite.style.background = "white";
+        listComponent.render();
+  //      loadMoreComponent.loadMoreButton.style.display = "block";
+        favoriteIsClick = false;
+    }
+};
+
 const listObject = new ListObject();
-
 let page = 1;
-
-inputComponent.render(document.body);
-document.body.append(listAnchor);
-
-// button search click
 inputComponent.button.onclick = () => {
     page = 1;
     listObject.listObject = [];
     inputComponent.favorite.style.background = "white";
+    favoriteIsClick = false;
 
     let placeName = inputComponent.input.value;
-    if (placeName) getRequest(placeName);
+    if (placeName) {
+        const json = getResponse(placeName);
 
-    /*
-    // pagination click
-    paginationComponent.loadMoreButton.onclick = () => {
+        json.then(json => {
+            if (
+                json.application_response_code >= 100 &&
+                json.application_response_code < 200
+            ) {
+                for (const listing of json.listings) {
+                    listObject.push(new ItemObject(listing));
+                }
+    
+                listComponent.onInit(listObject);
+                listComponent.render();
+            }
+
+            const totalPages = json.total_pages;
+
+            ul.innerHTML = "";
+            const liArray = [];
+
+            for (let i = 0; i < totalPages; i++) {
+                liArray[i] = document.createElement("li");
+                liArray[i].className = "paginationLi";
+                liArray[i].innerText = i + 1;
+
+                liArray[i].addEventListener("click", () => {
+
+                    liArray[i].style.background = "red";
+                    liArray[page - 1].style.background = "white";
+
+                    page = i + 1;
+
+                    const json = getResponse(placeName);
+
+                    json.then(json => {
+                        if (
+                            json.application_response_code >= 100 &&
+                            json.application_response_code < 200
+                        ) {
+
+                            listObject.listObject = [];
+
+                            for (const listing of json.listings) {
+                                listObject.push(new ItemObject(listing));
+                            }
+                
+                            listComponent.onInit(listObject);
+                            listComponent.render();
+                        }
+                    });
+                });
+
+                ul.append(liArray[i]);
+            }
+
+        liArray[page - 1].style.background = "red";
+
+            document.body.append(ul);
+        });
+        
+
+        
+    }
+
+
+/*
+    // loadmore click
+    loadMoreComponent.loadMoreButton.onclick = () => {
         console.log("load more button");
         page++;
 
         getRequest(placeName);
-    
-        favoriteIsClick = false;
-
-        paginationComponent.render();
-    
-        return false;
     };
-    */
+*/
+
+   //     loadMoreComponent.render();
 
     return false;
 };
 
-async function getRequest(placeName) {
+async function getResponse(placeName) {
     const url = `https://api.nestoria.co.uk/api?page=${page}&encoding=json&action=search_listings&place_name=${placeName}`;
 
     const response = await fetch(url);
     const json = await response.json();
 
-    for (const listing of json.response.listings) {
-        listObject.push(new ItemObject(listing));
-    }
-
     console.log("Response:", json.response);
 
-    listComponent.add(listObject);
-    listComponent.render();
-
-    favoriteIsClick = false;
-
-    paginationComponent = new PaginationComponent(document.body, json.response);
-    paginationComponent.render();
-}
-
-let favoriteIsClick = false;
-inputComponent.favorite.onclick = () => {
-    console.log("Favorite onclick");
-
-    if (!favoriteIsClick) {
-        inputComponent.favorite.style.background = "red";
-        listComponent.renderFavorite();
-        favoriteIsClick = true;
-    } else {
-        inputComponent.favorite.style.background = "white";
-        listComponent.render();
-        favoriteIsClick = false;
-    }
+    return json.response;
 }

@@ -9,6 +9,6 @@ export class ItemObject {
         this.bedroomNumber = json.bedroom_number;
         this.keywords = json.keywords;
 
-        this.isFavorite = false;
+   //     this.isFavorite = false;
     }
 }

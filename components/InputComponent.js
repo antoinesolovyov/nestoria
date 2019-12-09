@@ -1,5 +1,5 @@
 export class InputComponent {
-    constructor() {
+    constructor(anchor) {
         this.button = document.createElement("button");
         this.button.innerText = "Search";
         this.button.style.cursor = "pointer";
@@ -13,9 +13,11 @@ export class InputComponent {
         this.favorite.append(this.favoriteIcon);
         this.form = document.createElement("form");
         this.form.append(this.button, this.input, this.favorite);
+
+        this.anchor = anchor;
     }
 
-    render(anchor) {
-        anchor.append(this.form);
+    render() {
+        this.anchor.append(this.form);
     }
 }
